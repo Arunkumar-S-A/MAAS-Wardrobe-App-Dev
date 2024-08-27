@@ -21,11 +21,33 @@ class GalleryPage extends StatelessWidget {
       ),
       itemCount: _items.length,
       itemBuilder: (context, index) {
-        return GridTile(
-          child: Image.network(_items[index]['image']!),
-          footer: GridTileBar(
-            backgroundColor: Colors.black54,
-            title: Text(_items[index]['caption']!),
+        return InkWell(
+          onTap: () {
+            // Navigate to detail page or perform some action
+            print('Tapped on ${_items[index]['caption']}');
+          },
+          child: GridTile(
+            child: Image.network(
+              _items[index]['image']!,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return Center(child: Icon(Icons.error));
+              },
+            ),
+            footer: GridTileBar(
+              backgroundColor: Colors.black54,
+              title: Text(_items[index]['caption']!),
+            ),
           ),
         );
       },
